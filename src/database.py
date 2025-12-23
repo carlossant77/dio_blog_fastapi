@@ -1,9 +1,14 @@
 import sqlalchemy as sa
 import databases
 
-DATABASE_URL = "sqlite:///./blog.db"
-db_client = databases.Database(DATABASE_URL)
-database = db_client
+from src.config import settings
+
+db_client = databases.Database(settings.DATABASE_URL)
 metadata = sa.MetaData()
-engine = sa.create_engine(DATABASE_URL, connect_args={
-                          "check_same_thread": False})
+database = db_client
+
+if settings.environment == "production":
+    engine = sa.create_engine(settings.DATABASE_URL)
+else:
+    engine = sa.create_engine(settings.DATABASE_URL, 
+                              connect_args={"check_same_thread": False})
